@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Netflix Clone - Login</title>
+
+  <!-- Tailwind CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+
+  <style>
+    body {
+      background: url('https://assets.nflxext.com/ffe/siteui/vlv3/5a6fbbdc-a70a-4df0-bc20-2fa7a25260fc/c3db66dc-b7f8-4e09-8f99-c1d894165f7c/US-en-20230619-popsignuptwoweeks-perspective_alpha_website_large.jpg') no-repeat center center fixed;
+      background-size: cover;
+    }
+    .bg-black-opacity {
+      background-color: rgba(0, 0, 0, 0.75);
+    }
+    input:focus {
+      outline: 2px solid #e50914; /* Netflix red */
+      outline-offset: 2px;
+    }
+  </style>
+</head>
+<body class="flex items-center justify-center min-h-screen">
+
+  <div class="bg-black-opacity p-10 rounded-lg max-w-md w-full text-white">
+    <h2 class="text-4xl font-bold mb-8 text-center">Sign In</h2>
+    <form id="loginForm" class="space-y-6" novalidate>
+      <div>
+        <input
+          id="email"
+          type="email"
+          placeholder="Email or phone number"
+          required
+          class="w-full p-3 rounded bg-gray-800 text-white focus:outline-none"
+        />
+        <p id="emailError" class="text-red-500 text-sm mt-1 hidden">Please enter a valid email.</p>
+      </div>
+      <div>
+        <input
+          id="password"
+          type="password"
+          placeholder="Password"
+          required
+          class="w-full p-3 rounded bg-gray-800 text-white focus:outline-none"
+        />
+        <p id="passwordError" class="text-red-500 text-sm mt-1 hidden">Password must be at least 6 characters.</p>
+      </div>
+      <p id="loginError" class="text-red-500 text-center text-sm hidden">Invalid email or password.</p>
+      <button
+        id="submitBtn"
+        type="submit"
+        class="w-full bg-red-600 hover:bg-red-700 py-3 rounded font-semibold text-lg transition-colors disabled:opacity-50"
+      >
+        Sign In
+      </button>
+    </form>
+
+    <p class="mt-6 text-gray-400 text-sm text-center">
+      New to Netflix? <a href="index.html" class="text-white hover:underline">Sign up now.</a>
+    </p>
+  </div>
+
+  <script>
+    const form = document.getElementById('loginForm');
+    const emailInput = document.getElementById('email');
+    const passwordInput = document.getElementById('password');
+    const emailError = document.getElementById('emailError');
+    const passwordError = document.getElementById('passwordError');
+    const loginError = document.getElementById('loginError');
+    const submitBtn = document.getElementById('submitBtn');
+
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      // Reset errors
+      emailError.classList.add('hidden');
+      passwordError.classList.add('hidden');
+      loginError.classList.add('hidden');
+
+      let valid = true;
+
+      // Basic validation
+      if (!emailInput.value || !validateEmail(emailInput.value)) {
+        emailError.classList.remove('hidden');
+        valid = false;
+      }
+
+      if (!passwordInput.value || passwordInput.value.length < 6) {
+        passwordError.classList.remove('hidden');
+        valid = false;
+      }
+
+      if (!valid) return;
+
+      // Disable button while "authenticating"
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Signing In...';
+
+      // Simulate async auth (2 seconds)
+      setTimeout(() => {
+        // Hardcoded credentials
+        const validEmail = 'user@example.com';
+        const validPassword = 'password123';
+
+        if (emailInput.value === validEmail && passwordInput.value === validPassword) {
+          alert('Login successful! Redirecting...');
+          window.location.href = 'index.html'; // redirect to homepage
+        } else {
+          loginError.classList.remove('hidden');
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Sign In';
+        }
+      }, 2000);
+    });
+
+    function validateEmail(email) {
+      // Simple regex for email validation
+      return /^\S+@\S+\.\S+$/.test(email);
+    }
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Netflix Clone</title>
+
+  <!-- Tailwind CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+
+  <!-- Swiper CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+
+  <style>
+    .scrollbar-hide::-webkit-scrollbar {
+      display: none;
+    }
+    .scrollbar-hide {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+  </style>
+</head>
+<body class="bg-black text-white font-sans">
+
+  <!-- Navbar -->
+  <header class="flex justify-between items-center px-6 py-4 bg-gradient-to-b from-black to-transparent fixed w-full z-10">
+    <h1 class="text-3xl font-bold text-red-600">NETFLIX</h1>
+    <nav class="space-x-4 hidden md:block">
+      <a href="#" class="hover:underline">Home</a>
+      <a href="#" class="hover:underline">TV Shows</a>
+      <a href="#" class="hover:underline">Movies</a>
+      <a href="#" class="hover:underline">My List</a>
+    </nav>
+    <!-- Hamburger Menu -->
+    <div class="md:hidden">
+      <button id="menu-toggle" class="text-white text-xl focus:outline-none">☰</button>
+    </div>
+  </header>
+
+  <!-- Mobile Menu -->
+  <div id="mobile-menu" class="hidden bg-black px-6 py-4 fixed w-full top-16 z-10">
+    <nav class="flex flex-col space-y-2">
+      <a href="#" class="hover:underline">Home</a>
+      <a href="#" class="hover:underline">TV Shows</a>
+      <a href="#" class="hover:underline">Movies</a>
+      <a href="#" class="hover:underline">My List</a>
+    </nav>
+  </div>
+
+  <!-- Hero Section -->
+  <section class="h-screen bg-cover bg-center flex items-center justify-center pt-20" style="background-image: url('https://assets.nflxext.com/ffe/siteui/vlv3/5a6fbbdc-a70a-4df0-bc20-2fa7a25260fc/c3db66dc-b7f8-4e09-8f99-c1d894165f7c/US-en-20230619-popsignuptwoweeks-perspective_alpha_website_large.jpg');">
+    <div class="bg-black bg-opacity-60 p-8 rounded-lg text-center max-w-xl">
+      <h2 class="text-3xl md:text-5xl font-bold mb-4">Unlimited movies, TV shows, and more</h2>
+      <p class="text-lg mb-6">Watch anywhere. Cancel anytime.</p>
+      <button onclick="location.href='login.html'" class="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded text-lg font-semibold">Sign In</button>
+    </div>
+  </section>
+
+  <!-- Swiper Movie Section -->
+  <section class="px-6 py-12">
+    <h3 class="text-2xl md:text-3xl font-semibold mb-6">Trending Now</h3>
+    <div class="swiper mySwiper">
+      <div class="swiper-wrapper" id="trending-container">
+        <!-- Fetched via JS -->
+      </div>
+    </div>
+  </section>
+
+  <!-- New Releases -->
+  <section class="px-6 py-12">
+    <h3 class="text-2xl md:text-3xl font-semibold mb-4">New Releases</h3>
+    <div class="flex overflow-x-scroll scrollbar-hide space-x-4 pb-4" id="new-releases">
+      <!-- Fetched via JS -->
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="text-center text-gray-400 p-6 mt-12 border-t border-gray-700">
+    <p>&copy; 2025 Netflix Clone UI by Piyush Ranjan</p>
+  </footer>
+
+  <!-- Swiper JS -->
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
+  <!-- JavaScript -->
+  <script>
+    // Hamburger menu toggle
+    document.getElementById('menu-toggle').addEventListener('click', () => {
+      const menu = document.getElementById('mobile-menu');
+      menu.classList.toggle('hidden');
+    });
+
+    // Swiper init
+    const swiper = new Swiper(".mySwiper", {
+      slidesPerView: 2,
+      spaceBetween: 10,
+      grabCursor: true,
+      loop: true,
+      breakpoints: {
+        640: { slidesPerView: 3 },
+        768: { slidesPerView: 4 },
+        1024: { slidesPerView: 5 }
+      }
+    });
+
+    // TMDB API Fetch
+    const API_KEY = '9f650477d2f8465e46a9b8444f463273';
+    const IMG_PATH = 'https://image.tmdb.org/t/p/w500';
+
+    async function fetchMovies(endpoint, containerId) {
+      const res = await fetch(`https://api.themoviedb.org/3/${endpoint}?api_key=${API_KEY}`);
+      const data = await res.json();
+      const container = document.getElementById(containerId);
+
+      data.results.forEach(movie => {
+        const img = document.createElement('img');
+        img.src = IMG_PATH + movie.poster_path;
+        img.alt = movie.title;
+        img.className = 'rounded-lg min-w-[150px] sm:min-w-[180px] md:min-w-[200px] h-[250px] md:h-[300px] object-cover hover:scale-105 transition-transform';
+
+        const slide = document.createElement('div');
+        slide.className = containerId === 'trending-container' ? 'swiper-slide' : '';
+        slide.appendChild(img);
+
+        container.appendChild(slide);
+      });
+    }
+
+    fetchMovies('trending/movie/week', 'trending-container');
+    fetchMovies('movie/now_playing', 'new-releases');
+  </script>
+</body>
+</html>
